@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+dir=$(realpath $(dirname "$0"))
+now=$(date --iso-8601=seconds)
+
+mkdir -p $dir/data/$now
+cd $dir/data/$now
+curl -OL https://www.thenumberingsystem.com.au/download/EnhancedFullDownload.zip
+
+unzip EnhancedFullDownload.zip
+
+sqlite3 EnhancedFullDownload.sqlite3 \
+    ".mode csv" \
+    ".import EnhancedFullDownload.csv numbers_raw" \
+    ".read $dir/build.sql" \
+    ".exit"
